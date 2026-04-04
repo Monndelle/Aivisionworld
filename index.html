@@ -1,0 +1,165 @@
+import { useEffect, useState } from "react"; import { Card, CardContent } from "@/components/ui/card"; import { Button } from "@/components/ui/button"; import { Input } from "@/components/ui/input"; import { Textarea } from "@/components/ui/textarea"; import { motion } from "framer-motion";
+
+// AIVISIONWORLD - Eurovisionworld Style Demo
+
+export default function AivisionworldApp() { const [country, setCountry] = useState(""); const [artist, setArtist] = useState(""); const [song, setSong] = useState(""); const [odds, setOdds] = useState(""); const [file, setFile] = useState(null); const [entries, setEntries] = useState([]);
+
+// Laden aus localStorage useEffect(() => { const saved = localStorage.getItem("aivisionEntries"); if (saved) { setEntries(JSON.parse(saved)); } }, []);
+
+// Speichern in localStorage useEffect(() => { localStorage.setItem("aivisionEntries", JSON.stringify(entries)); }, [entries]);
+
+const handleFile = (e) => { const selected = e.target.files[0]; if (!selected) return;
+
+const reader = new FileReader();
+reader.onload = () => {
+  setFile(reader.result);
+};
+reader.readAsDataURL(selected);
+
+};
+
+const addEntry = () => { if (!country || !song) return;
+
+const newEntry = {
+  id: Date.now(),
+  country,
+  artist,
+  song,
+  odds,
+  file,
+  date: new Date().toLocaleString(),
+};
+
+setEntries([newEntry, ...entries]);
+
+setCountry("");
+setArtist("");
+setSong("");
+setOdds("");
+setFile(null);
+
+};
+
+const deleteEntry = (id) => { setEntries(entries.filter((e) => e.id !== id)); };
+
+return ( <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 p-6"> <motion.h1 initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-4xl font-bold mb-6 text-center" > Aivisionworld </motion.h1>
+
+<p className="text-center text-gray-600 mb-8">
+    Dein eigenes Eurovisionworld für den Aivision Song Contest
+  </p>
+
+  <div className="grid md:grid-cols-2 gap-6 max-w-6xl mx-auto">
+    <Card className="rounded-2xl shadow-lg">
+      <CardContent className="p-6 space-y-3">
+        <h2 className="text-xl font-semibold">
+          Teilnehmer hinzufügen
+        </h2>
+
+        <Input
+          placeholder="Land"
+          value={country}
+          onChange={(e) => setCountry(e.target.value)}
+        />
+
+        <Input
+          placeholder="Artist"
+          value={artist}
+          onChange={(e) => setArtist(e.target.value)}
+        />
+
+        <Input
+          placeholder="Songtitel"
+          value={song}
+          onChange={(e) => setSong(e.target.value)}
+        />
+
+        <Input
+          placeholder="Odds (z.B. 3.5)"
+          value={odds}
+          onChange={(e) => setOdds(e.target.value)}
+        />
+
+        <Input
+          type="file"
+          accept="audio/*"
+          onChange={handleFile}
+        />
+
+        <Button onClick={addEntry} className="w-full">
+          Speichern
+        </Button>
+
+        <p className="text-sm text-gray-500">
+          Songs werden gespeichert und können abgespielt werden
+        </p>
+      </CardContent>
+    </Card>
+
+    <div className="space-y-4">
+      {entries.length === 0 && (
+        <Card className="rounded-2xl shadow">
+          <CardContent className="p-6 text-center text-gray-500">
+            Noch keine Songs eingetragen
+          </CardContent>
+        </Card>
+      )}
+
+      {entries.map((entry) => (
+        <motion.div
+          key={entry.id}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <Card className="rounded-2xl shadow">
+            <CardContent className="p-6">
+              <div className="flex justify-between items-start gap-4">
+                <div>
+                  <h3 className="font-bold text-lg">
+                    {entry.country} - {entry.song}
+                  </h3>
+
+                  {entry.artist && (
+                    <p className="text-sm">
+                      Artist: {entry.artist}
+                    </p>
+                  )}
+
+                  {entry.odds && (
+                    <p className="text-sm">
+                      Odds: {entry.odds}
+                    </p>
+                  )}
+
+                  {entry.file && (
+                    <audio
+                      controls
+                      src={entry.file}
+                      className="mt-3"
+                    />
+                  )}
+
+                  <p className="text-xs text-gray-500 mt-2">
+                    {entry.date}
+                  </p>
+                </div>
+
+                <Button
+                  variant="destructive"
+                  onClick={() => deleteEntry(entry.id)}
+                >
+                  Löschen
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      ))}
+    </div>
+  </div>
+
+  <div className="text-center text-sm text-gray-500 mt-8">
+    Aivisionworld - geeignet für GitHub Pages
+  </div>
+</div>
+
+); }
