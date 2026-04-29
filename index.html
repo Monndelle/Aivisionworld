@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Premium GitHub Slots 🎰</title>
+    <title>GitHub Pro Slots V4 🎰</title>
     <style>
         :root {
             --gold: #ffcc00;
@@ -17,7 +17,7 @@
         body {
             background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a0c 100%);
             color: white;
-            font-family: 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -31,9 +31,8 @@
             padding: 15px;
             border-radius: 20px;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
             width: 95vw;
-            max-width: 500px;
+            max-width: 480px;
             backdrop-filter: blur(10px);
         }
 
@@ -47,7 +46,7 @@
             border-radius: 12px;
         }
 
-        .balance-display { font-size: 1.4rem; font-weight: 800; color: var(--neon-green); }
+        .balance-display { font-size: 1.5rem; font-weight: 800; color: var(--neon-green); }
 
         .slot-machine {
             display: grid;
@@ -63,7 +62,7 @@
             background: linear-gradient(145deg, #222, #111);
             height: 18vw;
             max-height: 80px;
-            font-size: 2rem;
+            font-size: 2.2rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -74,9 +73,7 @@
         .win-highlight { 
             border-color: var(--gold); 
             box-shadow: 0 0 15px var(--gold);
-            background: linear-gradient(145deg, #332b00, #111);
-            transform: scale(1.02);
-            z-index: 2;
+            background: linear-gradient(145deg, #443300, #111);
         }
 
         .spinning { animation: blurAnim var(--speed) infinite linear; }
@@ -86,7 +83,7 @@
             margin-top: 15px;
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            gap: 8px;
+            gap: 10px;
         }
 
         .control-box {
@@ -109,22 +106,21 @@
             outline: none;
         }
 
-        input[type="range"] { accent-color: var(--gold); }
-
         .btn-group { grid-column: span 3; display: flex; gap: 10px; margin-top: 5px; }
 
         button {
             padding: 12px;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             font-weight: 800;
             cursor: pointer;
             transition: 0.2s;
+            text-transform: uppercase;
         }
 
         #spin-btn { background: var(--gold); color: #000; flex: 2; }
         #auto-btn { background: #333; color: #fff; flex: 1; }
-        .auto-running { background: #ff4444 !important; }
+        .auto-active { background: #ff4444 !important; }
 
         .overlay {
             display: none;
@@ -132,11 +128,10 @@
             top:0; left:0; width:100%; height:100%;
             z-index: 1000;
             justify-content: center; align-items: center;
-            backdrop-filter: blur(5px);
-            padding: 20px;
+            backdrop-filter: blur(8px);
         }
 
-        #bonus-overlay { background: rgba(255, 204, 0, 0.2); }
+        #bonus-overlay { background: rgba(255, 204, 0, 0.15); }
         #bankrupt-overlay { background: var(--danger); }
 
         .popup {
@@ -145,19 +140,17 @@
             border-radius: 20px;
             border: 2px solid var(--gold);
             text-align: center;
-            width: 100%;
-            max-width: 300px;
+            width: 80%;
+            max-width: 320px;
         }
-
-        .popup h2 { margin: 0 0 10px 0; color: var(--gold); }
     </style>
 </head>
 <body>
 
     <div id="bonus-overlay" class="overlay">
         <div class="popup">
-            <h2 id="bonus-title">BONUS!</h2>
-            <p id="bonus-msg"></p>
+            <h2 id="bonus-title">GEWINN!</h2>
+            <p id="bonus-msg" style="font-size: 1.2rem;"></p>
             <button onclick="closePopup()" style="width:100%; background:var(--gold);">START</button>
         </div>
     </div>
@@ -165,7 +158,7 @@
     <div id="bankrupt-overlay" class="overlay">
         <div class="popup" style="border-color: white;">
             <h2 style="color: white;">PLEITE! 💸</h2>
-            <p>Einsatz zu hoch oder Konto leer.</p>
+            <p>Dein Guthaben ist aufgebraucht.</p>
             <button onclick="resetGame()" style="width:100%; background:white; color:black;">Hol dir neue 10,00 €</button>
         </div>
     </div>
@@ -173,20 +166,19 @@
     <div class="game-wrapper">
         <div class="stats-bar">
             <div class="balance-display">€ <span id="balance">10.00</span></div>
-            <div id="fs-indicator" style="display:none; color: var(--gold); font-size: 0.8rem;">FS: <span id="fs-count">0</span></div>
-            <button onclick="resetGame()" style="background:none; color:#444; border:none; font-size: 10px;">RESET</button>
+            <div id="fs-display" style="display:none; color: var(--gold); font-weight: bold;">FS: <span id="fs-count">0</span></div>
+            <button onclick="resetGame()" style="background:none; border:none; color:#444; font-size: 10px;">RESET</button>
         </div>
 
-        <div class="slot-machine" id="machine">
-            </div>
+        <div id="machine" class="slot-machine"></div>
 
         <div class="controls">
             <div class="control-box">
                 <label>Einsatz (€)</label>
-                <input type="number" id="bet" value="0.20" step="0.10">
+                <input type="number" id="bet" value="0.20" step="0.01" min="0.01">
             </div>
             <div class="control-box">
-                <label>Auto (<span id="auto-val">10</span>)</label>
+                <label>Auto-Spins (<span id="auto-val">10</span>)</label>
                 <input type="range" id="auto-slider" min="1" max="50" value="10" oninput="document.getElementById('auto-val').textContent=this.value">
             </div>
             <div class="control-box">
@@ -199,27 +191,27 @@
                 <button id="auto-btn">AUTO</button>
             </div>
         </div>
-        <p id="status" style="text-align: center; color: #444; font-size: 0.7rem; margin-top: 10px;">5 Gewinnlinien aktiv</p>
+        <p id="status" style="text-align: center; color: #444; font-size: 0.7rem; margin-top: 10px;">Viel Glück!</p>
     </div>
 
     <script>
-        const symbols = ['🍒','🍋','🍒','🍇','🍒','🔔','🍋','🍒','🍇','🍋','🍒','💎','🍋','🍇','🍒','7️⃣','🍋','🍒','💶','🍇','🔔','🍒','🍋'];
+        const symbols = ['🍒','🍋','🍒','🍇','🍒','🔔','🍒','🍋','🍒','💎','🍒','🍋','🍒','7️⃣','🍒','💶','🍋','🍒','🍇','🔔','🍒'];
         let balance = 10.00;
         let freeSpins = 0;
-        let bonusTotal = 0;
+        let currentBonusWin = 0;
         let isSpinning = false;
         let autoCount = 0;
 
         const machine = document.getElementById('machine');
-        for(let i=0; i<5; i++) {
+        for(let i=0; i<5; i++){
             const col = document.createElement('div');
             col.className = 'reel-column';
             col.id = `col-${i}`;
             for(let j=0; j<3; j++) {
-                const sym = document.createElement('div');
-                sym.className = 'symbol';
-                sym.textContent = '🎰';
-                col.appendChild(sym);
+                const s = document.createElement('div');
+                s.className = 'symbol';
+                s.textContent = '🎰';
+                col.appendChild(s);
             }
             machine.appendChild(col);
         }
@@ -229,27 +221,31 @@
 
         spinBtn.addEventListener('click', () => { autoCount = 0; stopAutoUI(); startSpin(); });
         autoBtn.addEventListener('click', () => {
-            if(autoCount > 0) { autoCount = 0; stopAutoUI(); }
-            else { 
-                autoCount = parseInt(document.getElementById('auto-slider').value); 
-                autoBtn.classList.add('auto-running');
+            if(autoCount > 0) { stopAutoUI(); }
+            else {
+                autoCount = parseInt(document.getElementById('auto-slider').value);
+                autoBtn.classList.add('auto-active');
                 autoBtn.textContent = `STOP (${autoCount})`;
-                startSpin(); 
+                startSpin();
             }
         });
 
         function startSpin() {
             if(isSpinning) return;
             
-            let bet = parseFloat(document.getElementById('bet').value);
-            // ANTI-CHEAT & VALIDIERUNG
-            if(isNaN(bet) || bet < 0.01) { 
-                bet = 0.01; 
-                document.getElementById('bet').value = "0.10";
-            }
+            let betEl = document.getElementById('bet');
+            let bet = parseFloat(betEl.value);
+
+            // Einsatz-Sicherheit: Automatische Korrektur auf Restguthaben
+            if(bet < 0.01 || isNaN(bet)) { bet = 0.01; betEl.value = "0.01"; }
             if(bet > balance && freeSpins === 0) {
+                bet = balance;
+                betEl.value = balance.toFixed(2);
+            }
+
+            if(balance <= 0 && freeSpins === 0) {
                 document.getElementById('bankrupt-overlay').style.display = 'flex';
-                autoCount = 0; stopAutoUI();
+                stopAutoUI();
                 return;
             }
 
@@ -261,14 +257,14 @@
                 freeSpins--;
             } else {
                 balance -= bet;
-                bonusTotal = 0; // Reset bonus total when normal spin starts
+                currentBonusWin = 0; 
                 if(autoCount > 0) { autoCount--; autoBtn.textContent = `STOP (${autoCount})`; }
             }
+            updateUI();
 
             const speed = 450 - document.getElementById('speed-slider').value;
             document.documentElement.style.setProperty('--speed', (speed/1000)+'s');
-            updateUI();
-
+            
             const cols = document.querySelectorAll('.reel-column');
             cols.forEach(c => c.classList.add('spinning'));
 
@@ -289,9 +285,9 @@
                 isSpinning = false;
                 spinBtn.disabled = false;
 
-                // AUTO-SPIN LOGIK (auch für Freispiele)
+                // Nächster Spin (Auto oder Free)
                 if(freeSpins > 0 || autoCount > 0) {
-                    setTimeout(startSpin, 400);
+                    setTimeout(startSpin, 500);
                 } else {
                     stopAutoUI();
                 }
@@ -300,43 +296,42 @@
 
         function evaluate(screen, bet) {
             let win = 0;
-            const lines = [
-                [[0,1],[1,1],[2,1],[3,1],[4,1]], [[0,0],[1,0],[2,0],[3,0],[4,0]], [[0,2],[1,2],[2,2],[3,2],[4,2]],
-                [[0,0],[1,1],[2,2],[3,1],[4,0]], [[0,2],[1,1],[2,0],[3,1],[4,2]]
-            ];
-
             let bonusSymbols = 0;
             for(let i=0; i<5; i++) for(let j=0; j<3; j++) if(screen[i][j]==='💶') bonusSymbols++;
 
+            // Bonus-Treffer
             if(bonusSymbols >= 3) {
-                const f = Math.floor(Math.random()*5)+7;
+                const f = Math.floor(Math.random() * 8) + 5;
                 freeSpins += f;
-                showPopup("💶 BONUS!", `${f} Freispiele gewonnen!`);
+                showPopup("💶 FREISPIELE!", `${f} Gratis-Runden gewonnen!`);
                 return;
             }
 
+            // Gewinnlinien
+            const lines = [[[0,1],[1,1],[2,1],[3,1],[4,1]], [[0,0],[1,0],[2,0],[3,0],[4,0]], [[0,2],[1,2],[2,2],[3,2],[4,2]], [[0,0],[1,1],[2,2],[3,1],[4,0]], [[0,2],[1,1],[2,0],[3,1],[4,2]]];
             lines.forEach(line => {
                 let first = screen[line[0][0]][line[0][1]];
                 let count = 1;
                 for(let k=1; k<5; k++) if(screen[line[k][0]][line[k][1]] === first) count++; else break;
                 if(count >= 3) {
                     let m = {'🍒':0.5,'🍋':1,'🍇':2,'🔔':5,'💎':15,'7️⃣':50}[first] || 0;
-                    let lWin = (bet/5) * m * (count === 5 ? 5 : 1);
-                    win += lWin;
+                    win += (bet/5) * m;
                     for(let k=0; k<count; k++) document.getElementById(`col-${line[k][0]}`).querySelectorAll('.symbol')[line[k][1]].classList.add('win-highlight');
                 }
             });
 
             if(win > 0) {
                 balance += win;
-                if(freeSpins >= 0 && (bonusTotal > 0 || win > 0)) bonusTotal += win;
+                if(freeSpins >= 0 && (currentBonusWin > 0 || win > 0)) currentBonusWin += win;
                 document.getElementById('status').textContent = `WIN: +${win.toFixed(2)}€`;
+            } else {
+                document.getElementById('status').textContent = "---";
             }
 
-            // POPUP NACH BONUS-ENDE
-            if(freeSpins === 0 && bonusTotal > 0.01) {
-                showPopup("BONUS ENDE", `Gesamtgewinn: ${bonusTotal.toFixed(2)}€`);
-                bonusTotal = 0;
+            // Bonus-Zusammenfassung nach Ende der Freispiele
+            if(freeSpins === 0 && currentBonusWin > 0) {
+                showPopup("BONUS ENDE", `Gesamtgewinn: ${currentBonusWin.toFixed(2)}€`);
+                currentBonusWin = 0;
             }
             updateUI();
         }
@@ -347,35 +342,11 @@
             document.getElementById('bonus-overlay').style.display = 'flex';
         }
 
-        function closePopup() {
-            document.getElementById('bonus-overlay').style.display = 'none';
+        function closePopup() { 
+            document.getElementById('bonus-overlay').style.display = 'none'; 
+            if(freeSpins > 0 || autoCount > 0) startSpin();
         }
 
-        function stopAutoUI() {
-            autoBtn.classList.remove('auto-running');
-            autoBtn.textContent = "AUTO";
-        }
-
-        function resetGame() {
-            balance = 10.00; freeSpins = 0; bonusTotal = 0; autoCount = 0;
-            document.getElementById('bankrupt-overlay').style.display = 'none';
-            stopAutoUI(); updateUI();
-        }
-
-        function updateUI() {
-            document.getElementById('balance').textContent = balance.toFixed(2);
-            const ind = document.getElementById('fs-indicator');
-            if(freeSpins > 0) {
-                ind.style.display = 'block';
-                document.getElementById('fs-count').textContent = freeSpins;
-                spinBtn.style.background = "magenta";
-                spinBtn.textContent = "FREE";
-            } else {
-                ind.style.display = 'none';
-                spinBtn.style.background = "var(--gold)";
-                spinBtn.textContent = "SPIN";
-            }
-        }
-    </script>
-</body>
-</html>
+        function stopAutoUI() { autoCount = 0; autoBtn.classList.remove('auto-active'); autoBtn.textContent = "AUTO"; }
+        function resetGame() { balance = 10
+                              
