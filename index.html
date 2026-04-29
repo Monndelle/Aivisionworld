@@ -1,83 +1,34 @@
-<!DOCTYPE html><html lang="de">
+<!DOCTYPE html>
+<html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Free Slots 🎰</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-    }h1 {
-  margin-bottom: 20px;
-}
-
-.slot {
-  display: flex;
-  gap: 10px;
-  font-size: 60px;
-  margin-bottom: 20px;
-  background: #1e293b;
-  padding: 20px 30px;
-  border-radius: 12px;
-}
-
-button {
-  padding: 12px 20px;
-  font-size: 18px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  background: #22c55e;
-  color: black;
-  font-weight: bold;
-}
-
-button:hover {
-  background: #16a34a;
-}
-
-.info {
-  margin-top: 15px;
-  font-size: 16px;
-  opacity: 0.8;
-}
-
-  </style>
+    <meta charset="UTF-8">
+    <title>GitHub Free Slots</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>  <h1>🎰 Free Slots</h1>  <div class="slot">
-    <div id="r1">❓</div>
-    <div id="r2">❓</div>
-    <div id="r3">❓</div>
-  </div><button onclick="spin()">SPIN</button>
+<body>
+    <div class="game-container">
+        <h1>🎰 GitHub Luck 🎰</h1>
+        <div class="stats">
+            <p>Guthaben: <span id="balance">1000</span> 🪙</p>
+            <p>Status: <span id="status">Viel Glück!</span></p>
+        </div>
 
-  <div class="info" id="info">Drück Spin und schau was passiert 😄</div>  <script>
-    const symbols = ["🍒", "🍋", "🍉", "🔔", "⭐", "7️⃣"];
+        <div class="slot-machine">
+            <div class="reel" id="reel1">🍒</div>
+            <div class="reel" id="reel2">🔔</div>
+            <div class="reel" id="reel3">💎</div>
+            <div class="reel" id="reel4">🍋</div>
+            <div class="reel" id="reel5">7️⃣</div>
+        </div>
 
-    function spin() {
-      const r1 = symbols[Math.floor(Math.random() * symbols.length)];
-      const r2 = symbols[Math.floor(Math.random() * symbols.length)];
-      const r3 = symbols[Math.floor(Math.random() * symbols.length)];
-
-      document.getElementById("r1").innerText = r1;
-      document.getElementById("r2").innerText = r2;
-      document.getElementById("r3").innerText = r3;
-
-      let info = "Try again 😎";
-
-      if (r1 === r2 && r2 === r3) {
-        info = "JACKPOT!! 🔥 Du hast alle gleich!";
-      } else if (r1 === r2 || r2 === r3 || r1 === r3) {
-        info = "Nice! Fast ein Treffer 😏";
-      }
-
-      document.getElementById("info").innerText = info;
-    }
-  </script></body>
+        <div class="controls">
+            <label>Einsatz: </label>
+            <input type="number" id="bet-input" value="10" min="1">
+            <button id="spin-button">SPIN!</button>
+        </div>
+        
+        <div id="free-spins-alert" class="hidden">FREE SPINS AKTIV!</div>
+    </div>
+    <script src="script.js"></script>
+</body>
 </html>
