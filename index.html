@@ -3,133 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Premium Slots V5 🎰</title>
+    <title>GitHub Ultra Slots V6 🎰</title>
     <style>
         :root { 
             --gold: #ffcc00; 
-            --gold-bg: rgba(255, 204, 0, 0.15);
+            --gold-bg: rgba(255, 204, 0, 0.2);
             --neon: #00ff88; 
-            --danger-bg: rgba(255, 0, 0, 0.3);
+            --danger-bg: rgba(255, 0, 0, 0.35);
             --glass: rgba(255, 255, 255, 0.05); 
         }
-        
         * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
-        
         body { 
             background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a0c 100%); 
-            color: white; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-            margin: 0; 
-            overflow: hidden; 
-            transition: background 0.5s ease;
+            color: white; display: flex; justify-content: center; align-items: center; 
+            min-height: 100vh; margin: 0; overflow: hidden; transition: background 0.5s ease;
         }
-
-        /* Dynamische Hintergründe */
         body.bankrupt { background: radial-gradient(circle, #600 0%, #000 100%) !important; }
         body.bonus-active { background: radial-gradient(circle, #443300 0%, #000 100%) !important; }
+        body.jackpot-win { animation: jackpotFlash 0.3s infinite; }
+        @keyframes jackpotFlash { 0% { background: #ffcc00; } 50% { background: #ff00ff; } 100% { background: #00ffff; } }
 
         .game-wrapper { 
-            background: rgba(20, 20, 25, 0.9); 
-            padding: 15px; 
-            border-radius: 20px; 
-            border: 1px solid rgba(255,255,255,0.1); 
-            width: 95vw; 
-            max-width: 420px; 
+            background: rgba(20, 20, 25, 0.95); padding: 15px; border-radius: 20px; 
+            border: 1px solid rgba(255,255,255,0.1); width: 95vw; max-width: 420px; 
             backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-
         .stats-bar { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 12px; 
-            padding: 10px; 
-            background: var(--glass); 
-            border-radius: 12px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 12px; padding: 10px; background: var(--glass); border-radius: 12px; 
         }
-
         .balance { font-size: 1.4rem; font-weight: 800; color: var(--neon); }
-        
         .slot-machine { 
-            display: grid; 
-            grid-template-columns: repeat(5, 1fr); 
-            gap: 5px; 
-            background: #000; 
-            padding: 8px; 
-            border-radius: 15px; 
-            border: 2px solid #222;
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; 
+            background: #000; padding: 8px; border-radius: 15px; border: 2px solid #222;
         }
-
         .symbol { 
-            background: linear-gradient(145deg, #1a1a1a, #0a0a0a); 
-            height: 16vw; 
-            max-height: 70px; 
-            font-size: 1.8rem; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            border-radius: 8px; 
-            border: 1px solid #222; 
+            background: linear-gradient(145deg, #1a1a1a, #0a0a0a); height: 16vw; 
+            max-height: 70px; font-size: 1.8rem; display: flex; align-items: center; 
+            justify-content: center; border-radius: 8px; border: 1px solid #222; 
         }
-
         .win-highlight { 
-            border-color: var(--gold); 
-            box-shadow: 0 0 15px var(--gold); 
-            background: linear-gradient(145deg, #332b00, #111);
-            transform: scale(1.05);
-            z-index: 5;
+            border-color: var(--gold); box-shadow: 0 0 15px var(--gold); 
+            background: linear-gradient(145deg, #332b00, #111); transform: scale(1.05); z-index: 5;
         }
-
         .spinning { animation: blurAnim var(--speed) infinite linear; }
         @keyframes blurAnim { 0%, 100% { filter: blur(0); } 50% { filter: blur(4px); transform: translateY(2px); } }
 
-        .controls { 
-            margin-top: 15px; 
-            display: grid; 
-            grid-template-columns: 1fr 1fr 1fr; 
-            gap: 8px; 
-        }
-
+        .controls { margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
         .control-box { background: var(--glass); padding: 5px; border-radius: 10px; text-align: center; }
         label { font-size: 0.6rem; color: #777; display: block; font-weight: bold; }
         input { background: transparent; border: none; color: white; width: 100%; text-align: center; font-weight: bold; outline: none; }
-
         .btn-group { grid-column: span 3; display: flex; gap: 8px; margin-top: 5px; }
         button { padding: 12px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
-        
-        #spin-btn { background: var(--gold); color: #000; flex: 2; box-shadow: 0 4px 10px rgba(255,204,0,0.2); }
+        #spin-btn { background: var(--gold); color: #000; flex: 2; }
         #auto-btn { background: #333; color: #fff; flex: 1; }
         .auto-on { background: #ff4444 !important; }
 
-        /* Overlays */
         .overlay { 
-            display: none; 
-            position: fixed; 
-            inset: 0; 
-            z-index: 100; 
-            justify-content: center; 
-            align-items: center; 
-            backdrop-filter: blur(5px); 
+            display: none; position: fixed; inset: 0; z-index: 100; 
+            justify-content: center; align-items: center; backdrop-filter: blur(5px); 
         }
         #bonus-overlay { background: var(--gold-bg); }
         #bankrupt-overlay { background: var(--danger-bg); }
-
-        .popup { 
-            background: #111; 
-            padding: 30px; 
-            border-radius: 20px; 
-            border: 2px solid var(--gold); 
-            text-align: center; 
-            width: 80%; 
-            max-width: 300px; 
-            box-shadow: 0 0 40px rgba(0,0,0,0.8);
-        }
-        
-        .popup h2 { margin: 0 0 10px; }
+        .popup { background: #111; padding: 30px; border-radius: 20px; border: 2px solid var(--gold); text-align: center; width: 85%; max-width: 320px; }
         .popup button { background: var(--gold); width: 100%; margin-top: 15px; }
     </style>
 </head>
@@ -137,49 +73,37 @@
 
     <div id="bonus-overlay" class="overlay">
         <div class="popup">
-            <h2 id="b-title" style="color: var(--gold);">FREISPIELE!</h2>
+            <h2 id="b-title" style="color: var(--gold);">BONUS!</h2>
             <p id="b-msg" style="font-size: 1.2rem;"></p>
-            <button onclick="closePop('bonus-overlay')">LOS GEHT'S</button>
+            <button onclick="closePop('bonus-overlay')">WEITER</button>
         </div>
     </div>
 
     <div id="bankrupt-overlay" class="overlay">
         <div class="popup" style="border-color: #fff;">
             <h2 style="color: #fff;">PLEITE! 💸</h2>
-            <p>Dein Guthaben ist leer.</p>
-            <button onclick="reset()" style="background: #fff; color: #000;">Hol dir neue 10€</button>
+            <p>Einsatz zu hoch oder Konto leer.</p>
+            <button onclick="reset()" style="background: #fff; color: #000;">NEUSTART (10€)</button>
         </div>
     </div>
 
     <div class="game-wrapper">
         <div class="stats-bar">
             <div class="balance">€ <span id="balance">10.00</span></div>
-            <div id="fs-label" style="display:none; color:magenta; font-weight:800; font-size: 0.8rem;">BONUS: <span id="fs-count">0</span></div>
+            <div id="fs-label" style="display:none; color:magenta; font-weight:800; font-size: 0.8rem;">FS: <span id="fs-count">0</span></div>
             <button onclick="reset()" style="background:none; border:none; color:#444; font-size: 9px; cursor:pointer;">RESET</button>
         </div>
-
         <div id="machine" class="slot-machine"></div>
-
         <div class="controls">
-            <div class="control-box">
-                <label>Einsatz</label>
-                <input type="number" id="bet" value="0.20" step="0.01">
-            </div>
-            <div class="control-box">
-                <label>Auto (<span id="av">10</span>)</label>
-                <input type="range" id="as" min="1" max="50" value="10" oninput="document.getElementById('av').textContent=this.value">
-            </div>
-            <div class="control-box">
-                <label>Speed</label>
-                <input type="range" id="ss" min="50" max="400" value="250">
-            </div>
-            
+            <div class="control-box"><label>Einsatz</label><input type="number" id="bet" value="0.20" min="0.01" step="0.01"></div>
+            <div class="control-box"><label>Auto (<span id="av">10</span>)</label><input type="range" id="as" min="1" max="50" value="10" oninput="document.getElementById('av').textContent=this.value"></div>
+            <div class="control-box"><label>Speed</label><input type="range" id="ss" min="50" max="400" value="250"></div>
             <div class="btn-group">
                 <button id="spin-btn">SPIN</button>
                 <button id="auto-btn">AUTO</button>
             </div>
         </div>
-        <p id="status" style="text-align: center; color: #555; font-size: 0.7rem; margin-top: 10px;">Viel Erfolg an den Walzen!</p>
+        <p id="status" style="text-align: center; color: #555; font-size: 0.7rem; margin-top: 10px;">Mindestgewinn: 0,01€</p>
     </div>
 
 <script>
@@ -208,31 +132,19 @@
         if(spinning) return;
         let bIn = document.getElementById('bet');
         let bet = parseFloat(bIn.value);
-
         if(isNaN(bet) || bet < 0.01) { bet = 0.01; bIn.value = "0.01"; }
         if(bet > bal && fs === 0) { bet = bal; bIn.value = bal.toFixed(2); }
-        
-        if(bal <= 0 && fs === 0) {
-            document.body.classList.add('bankrupt');
-            document.getElementById('bankrupt-overlay').style.display = 'flex';
-            return;
-        }
+        if(bal <= 0 && fs === 0) { document.body.classList.add('bankrupt'); document.getElementById('bankrupt-overlay').style.display = 'flex'; return; }
 
         spinning = true; sBtn.disabled = true;
         document.querySelectorAll('.symbol').forEach(s => s.classList.remove('win-highlight'));
 
-        if(fs > 0) { 
-            fs--; 
-        } else { 
-            bal -= bet;
-            inBonus = false; bWin = 0; // Reset für Normalmodus
-            if(auto > 0) { auto--; aBtn.textContent = `STOP (${auto})`; }
-        }
+        if(fs > 0) { fs--; } 
+        else { bal -= bet; inBonus = false; bWin = 0; if(auto > 0) { auto--; aBtn.textContent = `STOP (${auto})`; } }
         
         updateUI();
         let speed = 450 - document.getElementById('ss').value;
         document.documentElement.style.setProperty('--speed', (speed/1000)+'s');
-        
         const cols = document.querySelectorAll('[id^="c-"]');
         cols.forEach(c => c.classList.add('spinning'));
 
@@ -248,7 +160,6 @@
             });
             evaluate(screen, bet);
             spinning = false; sBtn.disabled = false;
-
             if(document.querySelector('.overlay[style*="flex"]') === null) {
                 if(fs > 0 || auto > 0) setTimeout(start, 400); else stopAUI();
             }
@@ -257,14 +168,20 @@
 
     function evaluate(scr, bet) {
         let win = 0, euros = 0;
-        scr.forEach(col => col.forEach(s => { if(s==='💶') euros++; }));
+        let flat = scr.flat();
+        if(flat.every(v => v === flat[0]) && flat[0] !== '🎰') {
+            let jpk = bet * 500; bal += jpk;
+            document.body.classList.add('jackpot-win');
+            showPop('bonus-overlay', '🔥 JACKPOT! 🔥', `VOLLBILD! +${jpk.toFixed(2)}€`);
+            setTimeout(() => document.body.classList.remove('jackpot-win'), 3000);
+            updateUI(); return;
+        }
 
+        scr.forEach(col => col.forEach(s => { if(s==='💶') euros++; }));
         if(euros >= 3) {
-            let amt = Math.floor(Math.random()*8)+5;
-            fs += amt; inBonus = true; bWin = 0;
+            let amt = Math.floor(Math.random()*8)+5; fs += amt; inBonus = true; bWin = 0;
             document.body.classList.add('bonus-active');
-            showPop('bonus-overlay', '💶 FREISPIELE!', `${amt} Runden auf Haus!`);
-            return;
+            showPop('bonus-overlay', '💶 FREISPIELE!', `${amt} Runden!`); return;
         }
 
         const lines = [[[0,1],[1,1],[2,1],[3,1],[4,1]], [[0,0],[1,0],[2,0],[3,0],[4,0]], [[0,2],[1,2],[2,2],[3,2],[4,2]], [[0,0],[1,1],[2,2],[3,1],[4,0]], [[0,2],[1,1],[2,0],[3,1],[4,2]]];
@@ -273,54 +190,26 @@
             for(let k=1; k<5; k++) if(scr[l[k][0]][l[k][1]] === f) count++; else break;
             if(count >= 3) {
                 let m = {'🍒':0.5,'🍋':1,'🍇':2,'🔔':5,'💎':15,'7️⃣':50}[f] || 0;
-                let lW = (bet/5) * m; win += lW;
+                let lW = Math.max(0.01, (bet/5) * m); // MINDESTGEWINN 0,01€ FIX
+                win += lW;
                 for(let k=0; k<count; k++) document.getElementById(`c-${l[k][0]}`).querySelectorAll('.symbol')[l[k][1]].classList.add('win-highlight');
             }
         });
 
-        if(win > 0) { 
-            bal += win; 
-            if(inBonus) bWin += win;
-            document.getElementById('status').textContent = `WIN: +${win.toFixed(2)}€`;
-        }
-
-        if(inBonus && fs === 0) {
-            showPop('bonus-overlay', 'BONUS ENDE', `Gesamtgewinn: ${bWin.toFixed(2)}€`);
-            inBonus = false;
-            document.body.classList.remove('bonus-active');
-        }
+        if(win > 0) { bal += win; if(inBonus) bWin += win; document.getElementById('status').textContent = `WIN: +${win.toFixed(2)}€`; }
+        if(inBonus && fs === 0) { showPop('bonus-overlay', 'BONUS ENDE', `Gesamtgewinn: ${bWin.toFixed(2)}€`); inBonus = false; document.body.classList.remove('bonus-active'); }
         updateUI();
     }
 
-    function showPop(id, t, m) {
-        document.getElementById('b-title').textContent = t;
-        document.getElementById('b-msg').textContent = m;
-        document.getElementById(id).style.display = 'flex';
-    }
-
-    function closePop(id) {
-        document.getElementById(id).style.display = 'none';
-        if((fs > 0 || auto > 0) && !spinning) start();
-    }
-
+    function showPop(id, t, m) { document.getElementById('b-title').textContent = t; document.getElementById('b-msg').textContent = m; document.getElementById(id).style.display = 'flex'; }
+    function closePop(id) { document.getElementById(id).style.display = 'none'; if((fs > 0 || auto > 0) && !spinning) start(); }
     function stopAUI() { auto = 0; aBtn.classList.remove('auto-on'); aBtn.textContent = "AUTO"; }
-    
-    function reset() { 
-        bal = 10.0; fs = 0; bWin = 0; inBonus = false;
-        document.body.classList.remove('bankrupt', 'bonus-active');
-        document.getElementById('bankrupt-overlay').style.display='none';
-        stopAUI(); updateUI(); 
-    }
-
-    function updateUI() {
-        document.getElementById('balance').textContent = bal.toFixed(2);
+    function reset() { bal = 10.0; fs = 0; bWin = 0; inBonus = false; document.body.classList.remove('bankrupt', 'bonus-active'); document.getElementById('bankrupt-overlay').style.display='none'; stopAUI(); updateUI(); }
+    function updateUI() { 
+        document.getElementById('balance').textContent = bal.toFixed(2); 
         let fl = document.getElementById('fs-label');
-        if(fs > 0) {
-            fl.style.display = 'block'; document.getElementById('fs-count').textContent = fs;
-            sBtn.textContent = "FREE"; sBtn.style.background = "magenta";
-        } else {
-            fl.style.display = 'none'; sBtn.textContent = "SPIN"; sBtn.style.background = "var(--gold)";
-        }
+        if(fs > 0) { fl.style.display = 'block'; document.getElementById('fs-count').textContent = fs; sBtn.textContent = "FREE"; sBtn.style.background = "magenta"; }
+        else { fl.style.display = 'none'; sBtn.textContent = "SPIN"; sBtn.style.background = "var(--gold)"; }
     }
 </script>
 </body>
