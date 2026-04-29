@@ -2,33 +2,259 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>GitHub Free Slots</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Free Slots 🎰</title>
+    <style>
+        /* CSS STYLES */
+        body {
+            background: radial-gradient(circle, #2c3e50, #000000);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .game-container {
+            text-align: center;
+            background: #222;
+            padding: 30px;
+            border-radius: 20px;
+            border: 5px solid #ffd700;
+            box-shadow: 0 0 20px #ffd700;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 { margin-bottom: 10px; color: #ffd700; text-shadow: 2px 2px #000; }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            background: #111;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .balance-box { font-size: 1.2rem; font-weight: bold; color: #00ff00; }
+        .status-box { font-style: italic; color: #ccc; }
+
+        .slot-machine {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            perspective: 1000px;
+        }
+
+        .reel {
+            width: 70px;
+            height: 90px;
+            background: linear-gradient(to bottom, #fff, #ddd, #fff);
+            color: #000;
+            font-size: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            border: 2px solid #555;
+            transition: transform 0.1s ease-in-out;
+        }
+
+        /* Animation für das Drehen */
+        .spinning {
+            animation: roll 0.1s infinite linear;
+        }
+
+        @keyframes roll {
+            0% { transform: translateY(-5px); }
+            50% { transform: translateY(5px); }
+            100% { transform: translateY(-5px); }
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        input[type="number"] {
+            padding: 8px;
+            width: 80px;
+            border-radius: 5px;
+            border: none;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        button {
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            background: linear-gradient(to bottom, #ffd700, #b8860b);
+            color: #000;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            box-shadow: 0 5px #666;
+            transition: all 0.2s;
+        }
+
+        button:active {
+            box-shadow: 0 2px #333;
+            transform: translateY(3px);
+        }
+
+        button:disabled {
+            background: #555;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .free-spins {
+            margin-top: 10px;
+            color: #00ff00;
+            font-weight: bold;
+            animation: blink 0.5s infinite alternate;
+        }
+
+        @keyframes blink {
+            from { opacity: 1; } to { opacity: 0.3; }
+        }
+    </style>
 </head>
 <body>
+
     <div class="game-container">
-        <h1>🎰 GitHub Luck 🎰</h1>
+        <h1>🎰 SUPER SLOTS 🎰</h1>
+        
         <div class="stats">
-            <p>Guthaben: <span id="balance">1000</span> 🪙</p>
-            <p>Status: <span id="status">Viel Glück!</span></p>
+            <div class="balance-box">🪙 <span id="balance">1000</span></div>
+            <div id="status" class="status-box">Setze deinen Einsatz!</div>
         </div>
 
         <div class="slot-machine">
-            <div class="reel" id="reel1">🍒</div>
-            <div class="reel" id="reel2">🔔</div>
+            <div class="reel" id="reel1">💎</div>
+            <div class="reel" id="reel2">💎</div>
             <div class="reel" id="reel3">💎</div>
-            <div class="reel" id="reel4">🍋</div>
-            <div class="reel" id="reel5">7️⃣</div>
+            <div class="reel" id="reel4">💎</div>
+            <div class="reel" id="reel5">💎</div>
         </div>
 
         <div class="controls">
-            <label>Einsatz: </label>
-            <input type="number" id="bet-input" value="10" min="1">
-            <button id="spin-button">SPIN!</button>
+            <div>
+                <label>Einsatz: </label>
+                <input type="number" id="bet-input" value="10" min="1" max="1000">
+            </div>
+            <button id="spin-button">DREHEN!</button>
+            <div id="free-spin-info" class="free-spins" style="display: none;">FREE SPINS ÜBRIG: <span id="fs-count">0</span></div>
         </div>
-        
-        <div id="free-spins-alert" class="hidden">FREE SPINS AKTIV!</div>
     </div>
-    <script src="script.js"></script>
+
+    <script>
+        // JAVASCRIPT LOGIC
+        const symbols = ['🍒', '🍋', '🔔', '🍉', '💎', '7️⃣', '⭐'];
+        let balance = 1000;
+        let freeSpins = 0;
+        let isSpinning = false;
+
+        const reels = [
+            document.getElementById('reel1'),
+            document.getElementById('reel2'),
+            document.getElementById('reel3'),
+            document.getElementById('reel4'),
+            document.getElementById('reel5')
+        ];
+
+        const spinBtn = document.getElementById('spin-button');
+        const balanceDisplay = document.getElementById('balance');
+        const statusDisplay = document.getElementById('status');
+        const fsInfo = document.getElementById('free-spin-info');
+        const fsCount = document.getElementById('fs-count');
+
+        spinBtn.addEventListener('click', () => {
+            const betInput = document.getElementById('bet-input');
+            const bet = parseInt(betInput.value);
+
+            if (balance < bet && freeSpins === 0) {
+                statusDisplay.textContent = "Zu wenig Guthaben!";
+                return;
+            }
+
+            startSpin(bet);
+        });
+
+        function startSpin(bet) {
+            if (isSpinning) return;
+            isSpinning = true;
+            spinBtn.disabled = true;
+
+            if (freeSpins > 0) {
+                freeSpins--;
+            } else {
+                balance -= bet;
+            }
+
+            updateUI();
+            
+            // Animation starten
+            reels.forEach(reel => reel.classList.add('spinning'));
+            statusDisplay.textContent = "Walzen drehen...";
+
+            // Nach 1 Sekunde stoppen
+            setTimeout(() => {
+                reels.forEach(reel => reel.classList.remove('spinning'));
+                const results = reels.map(reel => {
+                    const res = symbols[Math.floor(Math.random() * symbols.length)];
+                    reel.textContent = res;
+                    return res;
+                });
+                checkWin(results, bet);
+                isSpinning = false;
+                spinBtn.disabled = false;
+            }, 1000);
+        }
+
+        function checkWin(results, bet) {
+            const counts = {};
+            results.forEach(s => counts[s] = (counts[s] || 0) + 1);
+
+            let maxSame = 0;
+            for (let s in counts) {
+                if (counts[s] > maxSame) maxSame = counts[s];
+            }
+
+            if (maxSame >= 3) {
+                let winAmount = bet * maxSame;
+                balance += winAmount;
+                
+                if (maxSame >= 3) {
+                    freeSpins += 3;
+                    statusDisplay.textContent = `GEWONNEN! +${winAmount} 🪙 & 3 Free Spins!`;
+                } else {
+                    statusDisplay.textContent = `GEWONNEN! +${winAmount} 🪙`;
+                }
+            } else {
+                statusDisplay.textContent = "Leider kein Gewinn.";
+            }
+            
+            updateUI();
+        }
+
+        function updateUI() {
+            balanceDisplay.textContent = balance;
+            if (freeSpins > 0) {
+                fsInfo.style.display = "block";
+                fsCount.textContent = freeSpins;
+            } else {
+                fsInfo.style.display = "none";
+            }
+        }
+    </script>
 </body>
 </html>
